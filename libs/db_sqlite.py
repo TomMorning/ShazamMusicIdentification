@@ -4,6 +4,7 @@ import sqlite3
 import sys
 from itertools import izip_longest
 from termcolor import colored
+import numpy as np
 
 class SqliteDatabase(Database):
   TABLE_SONGS = 'songs'
@@ -80,7 +81,7 @@ class SqliteDatabase(Database):
       args = [iter(iterable)] * n
       return (filter(None, values) for values
           in izip_longest(fillvalue=fillvalue, *args))
-
+    sqlite3.register_adapter(np.int64, lambda val: int(val))
     for split_values in grouper(values, 1000):
       query = "INSERT OR IGNORE INTO %s (%s) VALUES (?, ?, ?)" % (table, ", ".join(columns))
       self.cur.executemany(query, split_values)
